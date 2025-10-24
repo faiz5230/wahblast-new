@@ -143,8 +143,12 @@ class GroupsController extends Controller
 			return response('Device not Found!',500);
 		}
 			
-		$res = json_decode($response->getBody());
-		$request->get('status') = $res->success;
+		if($response->successful()){
+			$res = json_decode($response->body());
+			$status = $res->success ?? 0;
+		} else {
+			$status = 0;
+		}
 		
 		GroupChat::create([
 			'id_device' => $device->id,
@@ -221,8 +225,12 @@ class GroupsController extends Controller
 			return response('Device not Found!',500);
 		}
 			
-		$res = json_decode($response->getBody());
-		$request->get('status') = $res->success;
+		if($response->successful()){
+			$res = json_decode($response->body());
+			$status = $res->success ?? 0;
+		} else {
+			$status = 0;
+		}
 		
 		GroupChat::create([
 			'id_device' => $request->get('id_device'),
