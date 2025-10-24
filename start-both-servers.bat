@@ -19,7 +19,7 @@ echo.
 echo Both servers are starting in separate windows!
 echo.
 echo WhatsApp Server: Check the first window
-echo Laravel Server:  http://127.0.0.1:8000
+echo Laravel Server:  http://127.0.0.1:8080
 echo.
 echo Press any key to close this window...
 pause >nul
