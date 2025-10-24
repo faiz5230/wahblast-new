@@ -28,22 +28,28 @@ class AdminDeviceController extends Controller
 			$data = [];
 
 
-			if($response['status'] == 200)
+			if($response->successful())
 			{
-				if(isset($response['qrCode']))
+				$res = json_decode($response->body());
+
+				if(isset($res->qrCode))
 				{
 					// $device = Device::whereNumber($waKey)->first();
 					// $device->update(['status' => 'connected']);
-					$res = json_decode($response->getBody());
 					$image = $res->qrCode;
 					$data['result'] = $image;
 					$data['page_title'] = 'Scan Device';
 					return view('admin.device.scan', compact('data'));
 				}else{
-					Device::whereId($waKey)->first()->update(['status' => 'connected']);
+					$device = Device::whereId($waKey)->first();
+					if ($device) {
+						$device->update(['status' => 'connected']);
+					}
+					toast('Device berhasil terhubung!','success');
 					return redirect()->route('admin.device');
 				}
 			}else{
+				toast('Gagal terhubung ke WhatsApp Server','error');
 				return redirect()->route('admin.device');
 			}
     }
@@ -54,18 +60,23 @@ class AdminDeviceController extends Controller
 			http_build_query(['waKey' => $waKey]), 'application/x-www-form-urlencoded'
 		)->send('GET', env('URL_WA_SERVER').'/disconnect');
 
-		$res = json_decode($response->getBody());
-
-		if(isset($res->status))
+		if($response->successful())
 		{
-			
-			Device::whereId($waKey)->update(['status' => 'disconnected']);
-			toast('Sesi berhasil diputus!','success');
-			return redirect()->route('admin.device');
-		}else{
-			toast('Sesi gagal dihapus','error');
-			return redirect()->route('admin.device');
+			$res = json_decode($response->body());
+
+			if(isset($res->status))
+			{
+				$device = Device::whereId($waKey)->first();
+				if ($device) {
+					$device->update(['status' => 'disconnected']);
+				}
+				toast('Sesi berhasil diputus!','success');
+				return redirect()->route('admin.device');
+			}
 		}
+
+		toast('Sesi gagal dihapus','error');
+		return redirect()->route('admin.device');
     }
 
 	public function addDevice()

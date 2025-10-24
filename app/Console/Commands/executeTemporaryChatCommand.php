@@ -59,13 +59,15 @@ class executeTemporaryChatCommand extends Command
         
                 // Cek status server
                 if ($getResponse->status() == 500) {
-                    Device::whereId($device->id)->first()->update(['status' => 'disconnected']);
-                    return response()->json(['message' => 'Waduh, sepertinya ada yang bermasalah nih sama akun whatsapp nya!']);
+                    $device->update(['status' => 'disconnected']);
+                    $this->error('Waduh, sepertinya ada yang bermasalah nih sama akun whatsapp nya!');
+                    break; // Skip to next device
                 }
-                
+
                 if ($getResponse->status() != 200) {
-                    Device::whereId($device->id)->first()->update(['status' => 'disconnected']);
-                    return response()->json(['message' => 'Gagal mengirim pesan']);
+                    $device->update(['status' => 'disconnected']);
+                    $this->error('Gagal mengirim pesan');
+                    break; // Skip to next device
                 }
 
                 $number = $temporaryChat->number;

@@ -90,13 +90,20 @@ class SendScheduledMessage extends Command
                 
                 if($getResponse->status() == 500)
                 {
-                    Device::whereId($message->id_device)->first()->update(['status' => 'disconnected']);
-                    return response()->json(['message' => 'Waduh, sepertinya ada yang bermasalah nih sama akun whatsapp nya!']);
+                    $device = Device::whereId($message->id_device)->first();
+                    if ($device) {
+                        $device->update(['status' => 'disconnected']);
+                    }
+                    $this->error('Waduh, sepertinya ada yang bermasalah nih sama akun whatsapp nya!');
+                    continue;
                 }
-                
+
                 if($getResponse->status() != 200)
                 {
-                    Device::whereId($message->id_device)->first()->update(['status' => 'disconnected']);
+                    $device = Device::whereId($message->id_device)->first();
+                    if ($device) {
+                        $device->update(['status' => 'disconnected']);
+                    }
                     $this->info('Device not found!');
                     continue;
                 }

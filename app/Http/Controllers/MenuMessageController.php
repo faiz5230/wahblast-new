@@ -38,7 +38,7 @@ class MenuMessageController extends Controller
             'type.required' => 'Type harus di pilih terlebih dahulu!'
         ]);
 
-		if($request['type'] == "Text") {
+		if($request->get('type') == "Text") {
 
 				$body = $request->text;
 
@@ -48,7 +48,7 @@ class MenuMessageController extends Controller
 					return redirect()->back();
 				}
 
-		} else if($request['type'] == "Image" ) {
+		} else if($request->get('type') == "Image" ) {
 
 				$file       = $request->url_file;
 				$date       = date('d-m-Y');
@@ -61,7 +61,7 @@ class MenuMessageController extends Controller
 					'caption' => $request->text 
 				];
 	
-		} else if($request['type'] == "Video" ) {
+		} else if($request->get('type') == "Video" ) {
 
 				$file       = $request->url_file;
 				$date       = date('d-m-Y');
@@ -76,7 +76,7 @@ class MenuMessageController extends Controller
 				];
 
 
-		} else if($request['type'] == "PDF" ) {
+		} else if($request->get('type') == "PDF" ) {
 
 				$file       = $request->file('url_file');
 				$date       = date('d-m-Y');
@@ -266,7 +266,7 @@ class MenuMessageController extends Controller
 		}
 
 		$d = $request->all();
-		if($request['type'] == "Text") {
+		if($request->get('type') == "Text") {
 
 				$body = $request->text;
 				if($request->url_file)
@@ -275,7 +275,7 @@ class MenuMessageController extends Controller
 					return redirect()->back();
 				}
 
-		} else if($request['type'] == "Image" ) {
+		} else if($request->get('type') == "Image" ) {
 
 				$file       = $request->url_file;
 				$date       = date('d-m-Y');
@@ -288,7 +288,7 @@ class MenuMessageController extends Controller
 					'caption' => $request->text 
 				];
 				$d['url_file'] = null;
-		} else if($request['type'] == "Video" ) {
+		} else if($request->get('type') == "Video" ) {
 
 				$file       = $request->url_file;
 				$date       = date('d-m-Y');
@@ -302,7 +302,7 @@ class MenuMessageController extends Controller
 
 				];
 				$d['url_file'] = null;
-		} else if($request['type'] == "PDF" ) {
+		} else if($request->get('type') == "PDF" ) {
 
 				$file       = $request->file('url_file');
 				$date       = date('d-m-Y');
@@ -326,11 +326,11 @@ class MenuMessageController extends Controller
 			$maxMessage = $request->maxMessage;  // Maksimal 10 pesan per perangkat
 		
 			// Ambil kontak dalam chunk 100
-			Contact::select('phone_number')->chunk(100, function($contacts) use ($body, $devices, &$messageCount, &$deviceIndex, $totalDevices, $maxMessage, $request, $d) {
+			Contact::select('phone_number')->chunk(100, function($contacts) use ($body, $devices, &$messageCount, &$deviceIndex, $totalDevices, $maxMessage, $request, &$d) {
 				foreach ($contacts as $index => $a) {
 					// Ambil device saat ini berdasarkan deviceIndex
-					$currentDevice = $devices[$deviceIndex]; 
-					$request['waKey'] = $currentDevice->id; // Set device ID di request
+					$currentDevice = $devices[$deviceIndex];
+					$d['waKey'] = $currentDevice->id; // Set device ID di data array
 		
 					// Menghitung delay berdasarkan index pesan
 					$delay = ($index + 1) * $request->second;

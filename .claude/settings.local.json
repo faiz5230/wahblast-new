@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php:*)",
+      "Bash(del:*)",
+      "Bash(composer update:*)",
+      "Bash(timeout 300 tail:*)",
+      "Bash(composer:*)",
+      "Bash(curl -I http://127.0.0.1:8000)",
+      "Bash(tasklist:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(if [ -d \"@anywhatzap/anywhatzap\" ])",
+      "Bash(then ls -la \"@anywhatzap/anywhatzap\")",
+      "Bash(else echo \"Directory @anywhatzap/anywhatzap not found\")",
+      "Bash(fi)",
+      "Bash(if [ -d \"anywhatzap/anywhatzap\" ])",
+      "Bash(then ls -la anywhatzap/anywhatzap)",
+      "Bash(else echo \"Checking subdirectory...\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

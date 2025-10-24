@@ -44,11 +44,11 @@ class ChatsController extends Controller
 
 	public function sendChatApi(Request $request)
 	{
-		if($request['type'] == "Text") {
+		if($request->get('type') == "Text") {
 
 			$body = $request->text;
 
-		} else if($request['type'] == "Image" ) {
+		} else if($request->get('type') == "Image" ) {
 
 				$file       = $request->url_file;
 				$date       = date('d-m-Y');
@@ -61,7 +61,7 @@ class ChatsController extends Controller
 					'caption' => $request->text 
 				];
 
-		} else if($request['type'] == "Video" ) {
+		} else if($request->get('type') == "Video" ) {
 
 				$file       = $request->url_file;
 				$date       = date('d-m-Y');
@@ -76,11 +76,11 @@ class ChatsController extends Controller
 				];
 
 
-		} else if($request['type'] == "PDF" ) {
+		} else if($request->get('type') == "PDF" ) {
 
 			$body = [
-				'document'=>['url'=> $request['url_file']],
-				'caption'=>$request['text']
+				'document'=>['url'=> $request->get('url_file')],
+				'caption'=>$request->get('text')
 			];
 		}
 
@@ -147,8 +147,8 @@ class ChatsController extends Controller
 	public function sendChatWithImageApi(Request $request)
 	{
 		$body = [
-			'image'=>['url'=> $request['url_file']],
-			'caption'=>$request['text']
+			'image'=>['url'=> $request->get('url_file')],
+			'caption'=>$request->get('text')
 		];
 
 		$number = $request->number;
@@ -158,7 +158,7 @@ class ChatsController extends Controller
 
 		if($request->id_device)
 		{
-			$device = DB::table('devices')->select('name')->where('id',$request['id_device'])->first();
+			$device = DB::table('devices')->select('name')->where('id',$request->get('id_device'))->first();
 			if($number[0] == 0)
 			{
 					$getNumberFormat = $reg.substr($number,1);
@@ -177,14 +177,14 @@ class ChatsController extends Controller
 			}
 				
 			$res = json_decode($response->getBody());
-			$request['status'] = $res->success;
+			$request->get('status') = $res->success;
 			
 			Chat::create([
 				'id_device' => $request->get('id_device'),
 				'number' => $request->number,
 				'text' => $request->get('text'),
 				'type' => 'text',
-				'status' => $request['status'],
+				'status' => $request->get('status'),
 				'user_id' => Auth::id()
 			]);
 
@@ -205,7 +205,7 @@ class ChatsController extends Controller
 
 			elseif($deviceNumber[0] == 6)
 			{
-				$device = DB::table('devices')->select('id','name')->where('number',$request['device_number'])->first();
+				$device = DB::table('devices')->select('id','name')->where('number',$request->get('device_number'))->first();
 			}
 			
 
@@ -234,14 +234,14 @@ class ChatsController extends Controller
 			}
 				
 			$res = json_decode($response->getBody());
-			$request['status'] = $res->success;
+			$request->get('status') = $res->success;
 			
 			Chat::create([
 				'id_device' => $device->id,
 				'number' => $request->number,
 				'text' => $request->get('text'),
 				'type' => 'text',
-				'status' => $request['status'],
+				'status' => $request->get('status'),
 				'user_id' => Auth::id()
 			]);
 
@@ -253,7 +253,7 @@ class ChatsController extends Controller
 			]); 
 		} 
 
-			if($request['status'] == 1)
+			if($request->get('status') == 1)
 			{		
 				return response('Berhasil terkirim',200);
 			}
@@ -271,8 +271,8 @@ class ChatsController extends Controller
 		// 	$attach      = $date . '-' . $namaFile;
 		// 	$file->move(public_path().'/upload/file', $attach);
 		$body = [
-			'document'=>['url'=> $request['url_file']],
-			'caption'=>$request['text']
+			'document'=>['url'=> $request->get('url_file')],
+			'caption'=>$request->get('text')
 		];
 
 		$number = $request->number;
@@ -282,7 +282,7 @@ class ChatsController extends Controller
 
 		if($request->id_device)
 		{
-			$device = DB::table('devices')->select('name')->where('id',$request['id_device'])->first();
+			$device = DB::table('devices')->select('name')->where('id',$request->get('id_device'))->first();
 			if($number[0] == 0)
 			{
 					$getNumberFormat = $reg.substr($number,1);
@@ -309,19 +309,19 @@ class ChatsController extends Controller
 			
 			
 			$res = json_decode($response->getBody());
-			$request['status'] = $res->success;
+			$request->get('status') = $res->success;
 			
 			Chat::create([
-				'id_device' => $request['id_device'],
+				'id_device' => $request->get('id_device'),
 				'number' => $request->number,
 				'text' => $request->get('text'),
 				'type' => 'text',
-				'status' => $request['status'],
+				'status' => $request->get('status'),
 				'user_id' => Auth::id()
 			]); 
 
 			ChatLog::create([
-				'id_device' => $request['id_device'],
+				'id_device' => $request->get('id_device'),
 				'number' => $request->number,
 				'text' => $request->get('text'),
 				'type' => 'text',
@@ -337,7 +337,7 @@ class ChatsController extends Controller
 
 			elseif($deviceNumber[0] == 6)
 			{
-				$device = DB::table('devices')->select('id','name')->where('number',$request['device_number'])->first();
+				$device = DB::table('devices')->select('id','name')->where('number',$request->get('device_number'))->first();
 			}
 
 			if($number[0] == 0)
@@ -366,14 +366,14 @@ class ChatsController extends Controller
 			
 			
 			$res = json_decode($response->getBody());
-			$request['status'] = $res->success;
+			$request->get('status') = $res->success;
 			
 			Chat::create([
 				'id_device' => $device->id,
 				'number' => $request->number,
 				'text' => $request->get('text'),
 				'type' => 'text',
-				'status' => $request['status'],
+				'status' => $request->get('status'),
 				'user_id' => Auth::id()
 			]); 
 
@@ -389,7 +389,7 @@ class ChatsController extends Controller
 			return response('Device not Found!',500);
 		}
 
-			if($request['status'] == 1)
+			if($request->get('status') == 1)
 			{		
 				return response('Berhasil terkirim',200);
 			}
@@ -417,11 +417,11 @@ class ChatsController extends Controller
             'type.required' => 'Type harus di pilih terlebih dahulu!'
         ]);
 
-		if($request['type'] == "Text") {
+		if($request->get('type') == "Text") {
 
 				$body = $request->text;
 
-		} else if($request['type'] == "Image" ) {
+		} else if($request->get('type') == "Image" ) {
 
 				$file       = $request->url_file;
 				$date       = date('d-m-Y');
@@ -434,7 +434,7 @@ class ChatsController extends Controller
 					'caption' => $request->text 
 				];
 	
-		} else if($request['type'] == "Video" ) {
+		} else if($request->get('type') == "Video" ) {
 
 				$file       = $request->url_file;
 				$date       = date('d-m-Y');
@@ -449,7 +449,7 @@ class ChatsController extends Controller
 				];
 
 
-		} else if($request['type'] == "PDF" ) {
+		} else if($request->get('type') == "PDF" ) {
 
 				$file       = $request->file('url_file');
 				$date       = date('d-m-Y');
@@ -515,7 +515,7 @@ class ChatsController extends Controller
 		// 	$getNumbr = $request->get('number');
 		// 	Session::put('number',$getNumbr);
 
-		// $device = DB::table('devices')->select('name')->where('id',$request['id_device'])->first();
+		// $device = DB::table('devices')->select('name')->where('id',$request->get('id_device'))->first();
 
 		// foreach($numbers_in_arrays as $a)
 		// {
@@ -525,18 +525,18 @@ class ChatsController extends Controller
 		// 		]);
 				
 		// 	$res = json_decode($response->getBody());
-		// 	$request['status'] = $res->success;
+		// 	$request->get('status') = $res->success;
 			
 		// 	Chat::create([
 		// 		'id_device' => $request->get('id_device'),
 		// 		'number' => $a,
 		// 		'text' => $request->get('text'),
 		// 		'type' => $request->get('type'),
-		// 		'status' => $request['status']
+		// 		'status' => $request->get('status')
 		// 	]); 
 		// }
 
-		// 	if($request['status'] == 1)
+		// 	if($request->get('status') == 1)
 		// 	{		
 		// 		toast('Pesan berhasil terkirim!','success');
 		// 	}
@@ -578,19 +578,19 @@ class ChatsController extends Controller
 	{
 		$device = DB::table('devices')->select('name')->where('status','connected')->first();
 		// $device = DB::table('devices')->select('name')->where('id','1')->first();
-		$body = ['text'=>$request['text']];
+		$body = ['text'=>$request->get('text')];
 		$response = Http::post(env('URL_WA_SERVER').'/chats/send?id='.$device->name, [
 			'receiver' => Session::get('number'),
 			'message' => $body
 			]);
 		$res = json_decode($response->getBody());
-		$request['status'] = $res->success;
+		$request->get('status') = $res->success;
 		Chat::create([
 			'id_device' => 1,
             'number' => Session::get('number'),
             'text' => $request->get('text'),
             'type' => 'Text',
-            'status' => $request['status'],
+            'status' => $request->get('status'),
 			'user_id' => Auth::id()
 		]);
 

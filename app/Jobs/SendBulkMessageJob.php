@@ -14,10 +14,6 @@ use Illuminate\Support\Facades\Http;
 
 class SendBulkMessageJob implements ShouldQueue
 {
-    public $number;
-    public $body;
-    public $data;
-    public $number_format;
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
@@ -25,14 +21,12 @@ class SendBulkMessageJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($number, $body, $data, $number_format)
-    {
-    
-        $this->number = $number;
-        $this->body = $body;
-        $this->data = $data;
-        $this->number_format = $number_format;
-    }
+    public function __construct(
+        public string $number,
+        public string $body,
+        public array $data,
+        public string $number_format
+    ) {}
 
     /**
      * Execute the job.
@@ -48,13 +42,19 @@ class SendBulkMessageJob implements ShouldQueue
     
             if($getResponse->status() == 500)
             {
-                Device::whereId($this->data['waKey'])->first()->update(['status' => 'disconnected']);
+                $device = Device::whereId($this->data['waKey'])->first();
+                if ($device) {
+                    $device->update(['status' => 'disconnected']);
+                }
                 return response()->json(['message' => 'Waduh, sepertinya ada yang bermasalah nih sama akun whatsapp nya!']);
             }
 
             if($getResponse->status() != 200)
             {
-                Device::whereId($this->data['waKey'])->first()->update(['status' => 'disconnected']);
+                $device = Device::whereId($this->data['waKey'])->first();
+                if ($device) {
+                    $device->update(['status' => 'disconnected']);
+                }
                 \Log::error('Gagal mengirim pesan, status: ' . $getResponse['status']);
                 return;
             }

@@ -23,7 +23,8 @@ class SendWAMessage implements ShouldQueue
      */
     public function __construct()
     {
-        return $this->handle();
+        // Constructor should not return or call handle()
+        // handle() will be called automatically by the queue worker
     }
 
     /**

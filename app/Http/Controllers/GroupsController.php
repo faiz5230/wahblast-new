@@ -15,7 +15,7 @@ class GroupsController extends Controller
 
 	public function sendGroupApi(Request $request)
 	{
-		if($request['type'] == "Text") {
+		if($request->get('type') == "Text") {
 
 			$body = $request->text;
 			if($request->url_file)
@@ -23,7 +23,7 @@ class GroupsController extends Controller
 				return response()->json(['message' => 'Waduh, sepertinya ada yang bermasalah nih sama akun whatsapp nya'], 400);
 			}
 			
-		} else if($request['type'] == "Image" ) {
+		} else if($request->get('type') == "Image" ) {
 
 				$file       = $request->url_file;
 				$date       = date('d-m-Y');
@@ -36,7 +36,7 @@ class GroupsController extends Controller
 					'caption' => $request->text 
 				];
 	
-		} else if($request['type'] == "Video" ) {
+		} else if($request->get('type') == "Video" ) {
 
 				$file       = $request->url_file;
 				$date       = date('d-m-Y');
@@ -51,7 +51,7 @@ class GroupsController extends Controller
 				];
 
 
-		} else if($request['type'] == "PDF" ) {
+		} else if($request->get('type') == "PDF" ) {
 
 				$file       = $request->file('url_file');
 				$date       = date('d-m-Y');
@@ -109,8 +109,8 @@ class GroupsController extends Controller
 	public function sendGroupWithImageApi(Request $request)
 	{
 		$body = [
-			'image'=>['url'=> $request['url_file']],
-			'caption'=>$request['text']
+			'image'=>['url'=> $request->get('url_file')],
+			'caption'=>$request->get('text')
 		];
 
         $reg = 62;
@@ -118,7 +118,7 @@ class GroupsController extends Controller
 
 		if($request->id_device)
 		{
-			$device = DB::table('devices')->select('id','name')->where('id',$request['id_device'])->first();
+			$device = DB::table('devices')->select('id','name')->where('id',$request->get('id_device'))->first();
 		}
 
 		else{
@@ -130,7 +130,7 @@ class GroupsController extends Controller
 
 			elseif($deviceNumber[0] == 6)
 			{
-				$device = DB::table('devices')->select('id','name')->where('number',$request['device_number'])->first();
+				$device = DB::table('devices')->select('id','name')->where('number',$request->get('device_number'))->first();
 			}
 		}
 
@@ -144,18 +144,18 @@ class GroupsController extends Controller
 		}
 			
 		$res = json_decode($response->getBody());
-		$request['status'] = $res->success;
+		$request->get('status') = $res->success;
 		
 		GroupChat::create([
 			'id_device' => $device->id,
 			'number' => $request->groupNumber,
 			'text' => $request->get('text'),
 			'type' => 'Image',
-			'status' => $request['status'],
+			'status' => $request->get('status'),
 			'user_id' => Auth::id()
 		]); 
 
-			if($request['status'] == 1)
+			if($request->get('status') == 1)
 			{		
 				return response('Berhasil terkirim',200);
 			}
@@ -173,8 +173,8 @@ class GroupsController extends Controller
 		// 	$attach      = $date . '-' . $namaFile;
 		// 	$file->move(public_path().'/upload/file', $attach);
 		$body = [
-			'document'=>['url'=> $request['url_file']],
-			'caption'=>$request['text']
+			'document'=>['url'=> $request->get('url_file')],
+			'caption'=>$request->get('text')
 		];
 
 		$number = $request->number;
@@ -184,7 +184,7 @@ class GroupsController extends Controller
 
 		if($request->id_device)
 		{
-			$device = DB::table('devices')->select('name')->where('id',$request['id_device'])->first();
+			$device = DB::table('devices')->select('name')->where('id',$request->get('id_device'))->first();
 		}
 
 		else{
@@ -196,7 +196,7 @@ class GroupsController extends Controller
 
 			elseif($deviceNumber[0] == 6)
 			{
-				$device = DB::table('devices')->select('name')->where('number',$request['device_number'])->first();
+				$device = DB::table('devices')->select('name')->where('number',$request->get('device_number'))->first();
 			}
 		}
 
@@ -222,18 +222,18 @@ class GroupsController extends Controller
 		}
 			
 		$res = json_decode($response->getBody());
-		$request['status'] = $res->success;
+		$request->get('status') = $res->success;
 		
 		GroupChat::create([
 			'id_device' => $request->get('id_device'),
 			'number' => $request->number,
 			'text' => $request->get('text'),
 			'type' => 'text',
-			'status' => $request['status'],
+			'status' => $request->get('status'),
 			'user_id' => Auth::id()
 		]); 
 
-			if($request['status'] == 1)
+			if($request->get('status') == 1)
 			{		
 				return response('Berhasil terkirim',200);
 			}
@@ -268,12 +268,12 @@ class GroupsController extends Controller
 			'id_device.required' => 'Device ID harus di pilih!'
 		]);
 
-			$device = DB::table('devices')->select('name')->where('id',$request['id_device'])->first();
+			$device = DB::table('devices')->select('name')->where('id',$request->get('id_device'))->first();
 
-			if($request['type'] == "Text"){
-				$body = ['text'=>$request['text']];
+			if($request->get('type') == "Text"){
+				$body = ['text'=>$request->get('text')];
 			}
-			else if($request['type'] == "Image" ){
+			else if($request->get('type') == "Image" ){
 				$file       = $request->url_file;
 				$date       = date('d-m-Y');
 				$namaFile   = $file->getClientOriginalName();
@@ -281,11 +281,11 @@ class GroupsController extends Controller
 				$file->move(public_path().'/upload/file', $image);
 				$body = [
 					'image'=>['url'=> public_path().'/upload/file/'.$image],
-					'caption'=>$request['text'] 
+					'caption'=>$request->get('text') 
 				];
 	
 			}
-			else if($request['type'] == "Video" ){
+			else if($request->get('type') == "Video" ){
 				$file       = $request->url_file;
 				$date       = date('d-m-Y');
 				$namaFile   = $file->getClientOriginalName();
@@ -293,10 +293,10 @@ class GroupsController extends Controller
 				$file->move(public_path().'/upload/file', $video);
 				$body = [
 					'video'=>['url'=> public_path().'/upload/file/'.$video],
-					'caption'=>$request['text'] 
+					'caption'=>$request->get('text') 
 				];
 			}
-			else if($request['type'] == "PDF" ){
+			else if($request->get('type') == "PDF" ){
 				$file       = $request->url_file;
 				$date       = date('d-m-Y');
 				$namaFile   = $file->getClientOriginalName();
@@ -304,7 +304,7 @@ class GroupsController extends Controller
 				$file->move(public_path().'/upload/file', $doc);
 				$body = [
 					'document'=>['url'=> public_path().'/upload/file/'.$doc],
-					'caption'=> $request['text']
+					'caption'=> $request->get('text')
 				];
 			}
 
@@ -315,17 +315,17 @@ class GroupsController extends Controller
 				]);
 
                 $res = json_decode($response->getBody());
-				$request['status'] = $res->success;
+				$request->get('status') = $res->success;
 				GroupChat::create([
 					'number' => $request->get('number'),
 					'text' => $request->get('text'),
-					'status' => $request['status'],
+					'status' => $request->get('status'),
 					'id_device' => $request->get('id_device'),
 					'type' => $request->get('type'),
 					'user_id' => Auth::id()
 				]);
 				toast('Pesan berhasil terkirim ke Grup','success');
-				// $request['status'] = $res->success;
+				// $request->get('status') = $res->success;
 			
 			return redirect()->route('admin.groupChats');
     }
@@ -367,7 +367,7 @@ class GroupsController extends Controller
             'type.required' => 'Type harus di pilih terlebih dahulu!'
         ]);
 
-		if($request['type'] == "Text") {
+		if($request->get('type') == "Text") {
 
 			$body = $request->text;
 			if($request->url_file)
@@ -376,7 +376,7 @@ class GroupsController extends Controller
 				return redirect()->back();
 			}
 			
-		} else if($request['type'] == "Image" ) {
+		} else if($request->get('type') == "Image" ) {
 
 				$file       = $request->url_file;
 				$date       = date('d-m-Y');
@@ -389,7 +389,7 @@ class GroupsController extends Controller
 					'caption' => $request->text 
 				];
 	
-		} else if($request['type'] == "Video" ) {
+		} else if($request->get('type') == "Video" ) {
 
 				$file       = $request->url_file;
 				$date       = date('d-m-Y');
@@ -404,7 +404,7 @@ class GroupsController extends Controller
 				];
 
 
-		} else if($request['type'] == "PDF" ) {
+		} else if($request->get('type') == "PDF" ) {
 
 				$file       = $request->file('url_file');
 				$date       = date('d-m-Y');

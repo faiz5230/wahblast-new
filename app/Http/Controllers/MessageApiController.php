@@ -11,11 +11,11 @@ class MessageApiController extends Controller
 {
     public function sendChatApi(Request $request)
 	{
-		if(strtolower($request['type']) == "text") {
+		if(strtolower($request->get('type')) == "text") {
 
 			$body = $request->text;
 
-		} else if(strtolower($request['type']) == "image" ) {
+		} else if(strtolower($request->get('type')) == "image" ) {
 
 				$file       = $request->url_file;
 				$date       = date('d-m-Y');
@@ -29,7 +29,7 @@ class MessageApiController extends Controller
 					'caption' => $request->text 
 				];
 
-		} else if(strtolower($request['type']) == "video" ) {
+		} else if(strtolower($request->get('type')) == "video" ) {
 
 				$file       = $request->url_file;
 				$date       = date('d-m-Y');
@@ -45,7 +45,7 @@ class MessageApiController extends Controller
 				];
 
 
-		} else if(strtolower($request['type']) == "pdf" ) {
+		} else if(strtolower($request->get('type')) == "pdf" ) {
 
                 $file       = $request->file('url_file');
                 $date       = date('d-m-Y');

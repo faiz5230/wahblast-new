@@ -88,22 +88,32 @@ class SendScheduleGroupMessage extends Command
                     http_build_query(['waKey' => $message->id_device]), 'application/x-www-form-urlencoded'
                     )->send('GET', env('URL_WA_SERVER').'/connect');
                 
+                $device = Device::whereId($message->id_device)->first();
+
                 if($getResponse->status() == 500)
                 {
-                    Device::whereId($message->id_device)->first()->update(['status' => 'disconnected']);
-                    return response()->json(['message' => 'Waduh, sepertinya ada yang bermasalah nih sama akun whatsapp nya!']);
+                    if ($device) {
+                        $device->update(['status' => 'disconnected']);
+                    }
+                    $this->error('Waduh, sepertinya ada yang bermasalah nih sama akun whatsapp nya!');
+                    continue;
                 }
-                
+
                 if($getResponse->status() != 200)
                 {
-                    Device::whereId($message->id_device)->first()->update(['status' => 'disconnected']);
+                    if ($device) {
+                        $device->update(['status' => 'disconnected']);
+                    }
+                    $this->info('Device not found!');
+                    continue;
+                }
+
+                if (!$device) {
                     $this->info('Device not found!');
                     continue;
                 }
 
                 $numbers_in_arrays = explode( ',' , $message->number );
-
-                $device = Device::whereId($message->id_device)->first();
                 foreach($numbers_in_arrays as $a)
                 {
         
@@ -120,16 +130,9 @@ class SendScheduleGroupMessage extends Command
                         'type' => $message->type,
                         'status' => $response['status'],
                         'user_id' => $device->user_id
-                    ]); 
+                    ]);
                 }
-                    
 
-                if(!$device)
-                {
-                    $this->info('Device not found!');
-                    continue;
-                }
-                
                 $message->update([
                     'status' => true
                 ]);
