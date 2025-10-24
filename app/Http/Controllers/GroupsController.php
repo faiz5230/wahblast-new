@@ -323,7 +323,7 @@ class GroupsController extends Controller
 				]);
 
                 $res = json_decode($response->getBody());
-				$request->get('status') = $res->success;
+				$status = $res->success;
 				GroupChat::create([
 					'number' => $request->get('number'),
 					'text' => $request->get('text'),
