@@ -41,9 +41,9 @@ php artisan config:clear
 php artisan cache:clear
 echo.
 
-echo Starting Laravel Server on http://127.0.0.1:8080
+echo Starting Laravel Server on http://0.0.0.0:8080 (accessible from network)
 echo Press Ctrl+C to stop the server
 echo.
-php artisan serve --port=8080
+php artisan serve --host=0.0.0.0 --port=8080
 
 pause
